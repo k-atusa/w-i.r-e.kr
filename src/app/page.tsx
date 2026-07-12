@@ -81,7 +81,7 @@ export default function Home() {
       </section>
 
       <footer className={styles.footer}>
-        <p>© 2026 KATUSA Programming Club. All rights reserved.</p>
+        <p>© 2026 <a href="https://github.com/k-atusa" target="_blank" rel="noopener noreferrer" className="hover-link">KATUSA Programming Club</a>. All rights reserved.</p>
       </footer>
     </main>
   );

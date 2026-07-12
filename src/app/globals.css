@@ -37,6 +37,15 @@ a {
   text-decoration: none;
 }
 
+.hover-link {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.hover-link:hover {
+  color: var(--accent-color);
+}
+
 /* Glassmorphism utility */
 .glass {
   background: var(--surface-color);
