@@ -18,7 +18,7 @@ export default function Home() {
         </div>
         <nav className={styles.nav}>
           <Link href="#features" className={styles.navLink}>Features</Link>
-          <a href="https://web.w-i.r-e.kr/#/login" target="_blank" rel="noopener noreferrer">
+          <a href="https://web.wire.remotewire.net/#/login" target="_blank" rel="noopener noreferrer">
             <Button variant="outline" size="sm">Login</Button>
           </a>
         </nav>
@@ -39,12 +39,12 @@ export default function Home() {
             </p>
 
             <div className={styles.actions}>
-              <a href="https://web.w-i.r-e.kr/#/register" target="_blank" rel="noopener noreferrer">
+              <a href="https://web.wire.remotewire.net/#/register" target="_blank" rel="noopener noreferrer">
                 <Button size="lg" variant="primary">
                   Sign Up <ArrowRight size={18} />
                 </Button>
               </a>
-              <a href="https://web.w-i.r-e.kr/#/login" target="_blank" rel="noopener noreferrer">
+              <a href="https://web.wire.remotewire.net/#/login" target="_blank" rel="noopener noreferrer">
                 <Button size="lg" variant="secondary">
                   Login
                 </Button>
