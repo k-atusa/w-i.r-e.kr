@@ -1,0 +1,36 @@
+# Dependencies
+node_modules
+/npm-debug.log*
+
+# Next.js build output
+.next
+out
+
+# IDE and System Files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+.github
+
+# Local env files
+.env*.local
+
+# Docker & CI
+Dockerfile
+.dockerignore
+push-to-ghcr.sh
+scripts/push-to-ghcr.sh
+README.md
+LICENSE
+CLAUDE.md
+AGENTS.md
