@@ -46,31 +46,60 @@ TAG_COMMIT="${FULL_IMAGE_NAME}:sha-${GIT_COMMIT}"
 TAG_TIMESTAMP="${FULL_IMAGE_NAME}:t-${TIMESTAMP}"
 TAG_LATEST="${FULL_IMAGE_NAME}:latest"
 
-echo "Building Docker image..."
-docker build \
-  --build-arg NEXT_TELEMETRY_DISABLED=1 \
-  -t "${TAG_LATEST}" \
-  -t "${TAG_COMMIT}" \
-  -t "${TAG_TIMESTAMP}" \
-  .
+read -p "Do you want to build for multi-platform (linux/amd64, linux/arm64)? (y/N): " MULTI_PLATFORM
 
-echo "Build successful! Tags generated:"
-echo "  - ${TAG_LATEST}"
-echo "  - ${TAG_COMMIT}"
-echo "  - ${TAG_TIMESTAMP}"
-
-read -p "Do you want to push these images to GHCR now? (y/N): " CONFIRM_PUSH
-if [[ "$CONFIRM_PUSH" =~ ^[Yy]$ ]]; then
-    echo "Pushing images..."
-    docker push "${TAG_LATEST}"
-    docker push "${TAG_COMMIT}"
-    docker push "${TAG_TIMESTAMP}"
-    echo "=============================================="
-    echo "  Push completed successfully!"
-    echo "  Your image is available at:"
-    echo "  https://github.com/${IMAGE_OWNER}/${IMAGE_NAME}/pkgs/container/${IMAGE_NAME}"
-    echo "=============================================="
+if [[ "$MULTI_PLATFORM" =~ ^[Yy]$ ]]; then
+    # Multi-platform requires pushing directly since local daemon doesn't support multi-arch loading
+    echo "Note: Multi-platform builds (amd64/arm64) will be pushed directly to GHCR."
+    read -p "Are you ready to build and push to GHCR now? (y/N): " CONFIRM_PUSH
+    if [[ "$CONFIRM_PUSH" =~ ^[Yy]$ ]]; then
+        echo "Creating/using buildx builder..."
+        docker buildx create --use --name multi-platform-builder 2>/dev/null || docker buildx use multi-platform-builder
+        echo "Building and pushing multi-platform Docker images..."
+        docker buildx build \
+          --platform linux/amd64,linux/arm64 \
+          --build-arg NEXT_TELEMETRY_DISABLED=1 \
+          -t "${TAG_LATEST}" \
+          -t "${TAG_COMMIT}" \
+          -t "${TAG_TIMESTAMP}" \
+          --push \
+          .
+        echo "=============================================="
+        echo "  Multi-platform build and push completed successfully!"
+        echo "  Your image is available at:"
+        echo "  https://github.com/${IMAGE_OWNER}/${IMAGE_NAME}/pkgs/container/${IMAGE_NAME}"
+        echo "=============================================="
+    else
+        echo "Cancelled."
+    fi
 else
-    echo "Push cancelled. You can push them later using:"
-    echo "  docker push ${TAG_LATEST}"
+    # Standard single platform build
+    echo "Building Docker image for local platform..."
+    docker build \
+      --build-arg NEXT_TELEMETRY_DISABLED=1 \
+      -t "${TAG_LATEST}" \
+      -t "${TAG_COMMIT}" \
+      -t "${TAG_TIMESTAMP}" \
+      .
+
+    echo "Build successful! Tags generated:"
+    echo "  - ${TAG_LATEST}"
+    echo "  - ${TAG_COMMIT}"
+    echo "  - ${TAG_TIMESTAMP}"
+
+    read -p "Do you want to push these images to GHCR now? (y/N): " CONFIRM_PUSH
+    if [[ "$CONFIRM_PUSH" =~ ^[Yy]$ ]]; then
+        echo "Pushing images..."
+        docker push "${TAG_LATEST}"
+        docker push "${TAG_COMMIT}"
+        docker push "${TAG_TIMESTAMP}"
+        echo "=============================================="
+        echo "  Push completed successfully!"
+        echo "  Your image is available at:"
+        echo "  https://github.com/${IMAGE_OWNER}/${IMAGE_NAME}/pkgs/container/${IMAGE_NAME}"
+        echo "=============================================="
+    else
+        echo "Push cancelled. You can push them later using:"
+        echo "  docker push ${TAG_LATEST}"
+    fi
 fi
